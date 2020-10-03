@@ -160,8 +160,9 @@ public class ResetPasswordActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if(task.isSuccessful()){
-                            Toast.makeText(ResetPasswordActivity.this, "Congratulation You have Succefully Reset Password", Toast.LENGTH_SHORT).show();
                             loadingBar.dismiss();
+
+                            Toast.makeText(ResetPasswordActivity.this, "Congratulation You have Succefully Reset Password", Toast.LENGTH_SHORT).show();
 
                         }
                     }

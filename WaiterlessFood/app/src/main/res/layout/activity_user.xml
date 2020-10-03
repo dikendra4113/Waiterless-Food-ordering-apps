@@ -5,11 +5,29 @@
     android:id="@+id/rl"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginStart="1dp"
-    android:layout_marginTop="20dp"
-    android:layout_marginEnd="1dp"
+    tools:context=".UserActivity"
+    android:orientation="vertical">
 
-    tools:context=".UserActivity">
+    <com.google.android.material.tabs.TabLayout
+
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tabLayout"
+        android:background="@color/black"
+        app:tabMode="scrollable"
+        app:tabGravity="fill"
+
+        app:tabTextColor="@color/white"
+        app:tabIndicatorColor="@color/white"></com.google.android.material.tabs.TabLayout>
+
+    <androidx.viewpager.widget.ViewPager
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/view_pager"
+        android:layout_below="@+id/tabLayout"
+        android:layout_above="@+id/checkOut"
+        />
+
 
     <Button
         android:id="@+id/checkOut"
@@ -17,20 +35,12 @@
         android:layout_height="wrap_content"
         android:background="@color/colorPrimaryDark"
         android:gravity="center"
-        android:onClick="checkOutProduct"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
 
         android:text="check out"
         android:textColor="@android:color/white" />
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/cardView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="20dp"
-        android:layout_marginEnd="1dp"
-        android:layout_below="@id/checkOut"/>
-
-
 
 
 </RelativeLayout>

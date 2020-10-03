@@ -164,11 +164,13 @@ public class MainActivity extends AppCompatActivity {
                             Toast.makeText(MainActivity.this, "Logged in Succesfully...", Toast.LENGTH_SHORT).show();
                             loadingBar.dismiss();
                             Intent intent = new Intent(MainActivity.this,MenuActivity.class);
+                            Prevelents.currentUser = userData;
                             startActivity(intent);
                             finish();
                         }else if(currentDb.equals("Users")){
                             Toast.makeText(MainActivity.this, "Logged in Succesfully...", Toast.LENGTH_SHORT).show();
                             loadingBar.dismiss();
+                            Paper.book().write(Prevelents.phone,phoneNumber);
                             Intent intent = new Intent(MainActivity.this,HomeActivity.class);
                             intent.putExtra("phone",phoneNumber);
                             startActivity(intent);

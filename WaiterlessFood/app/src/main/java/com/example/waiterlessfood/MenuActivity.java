@@ -7,14 +7,14 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import io.paperdb.Paper;
 
 public class MenuActivity extends AppCompatActivity {
 
-    private ImageView tShirts,sportTShirts,femaleDresses,sweathers;
-    private ImageView shoes,glasses,books,hatsCaps;
-    private ImageView headPhones,laptops,watches,mobilePhones;
+
+    private TextView starterTxt,main_courseTxt,pizzaTxt,pastaTxt,bevergasTxt,sandwichTxt;
     private Button logoutBtn;
 
     public void logout(View view){
@@ -28,106 +28,69 @@ public class MenuActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
-        tShirts = findViewById(R.id.men_tshirt);
-        sportTShirts = findViewById(R.id.sport_tshirt);
-        femaleDresses = findViewById(R.id.women_tshirt);
-        sweathers = findViewById(R.id.shewtwer);
-        shoes = findViewById(R.id.shoes);
-        glasses = findViewById(R.id.glass);
-        books = findViewById(R.id.books);
-        hatsCaps = findViewById(R.id.hats);
-        headPhones = findViewById(R.id.headphone);
-        laptops = findViewById(R.id.laptop);
-        watches = findViewById(R.id.watches);
-        mobilePhones = findViewById(R.id.mobile_phones);
+        sandwichTxt = findViewById(R.id.sandwiches_cat);
+        pastaTxt = findViewById(R.id.pasta_cat);
+        main_courseTxt = findViewById(R.id.main_cat);
+        starterTxt = findViewById(R.id.starter_cat);
+        pizzaTxt = findViewById(R.id.pizza_cat);
+        bevergasTxt = findViewById(R.id.beverg_cat);
+
         logoutBtn = findViewById(R.id.adminLogout);
 
 
 
-        tShirts.setOnClickListener(new View.OnClickListener() {
+        starterTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Sweets");
+                intent.putExtra("catagary","Starters");
                 startActivity(intent);
             }
         });
-        sportTShirts.setOnClickListener(new View.OnClickListener() {
+        pizzaTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Vegetables");
-                startActivity(intent);
-            }
-        });
-
-        femaleDresses.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Pizza");
-                startActivity(intent);
-            }
-        });
-        sweathers.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Burgers");
+                intent.putExtra("catagary","Pizzas");
                 startActivity(intent);
             }
         });
 
-
-        shoes.setOnClickListener(new View.OnClickListener() {
+        pastaTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Non-veges");
+                intent.putExtra("catagary","Pastas");
                 startActivity(intent);
             }
         });
-        glasses.setOnClickListener(new View.OnClickListener() {
+        sandwichTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Drinks");
-                startActivity(intent);
-            }
-        });
-        books.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Ice-Creame");
-                startActivity(intent);
-            }
-        });
-        hatsCaps.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Chocolates");
+                intent.putExtra("catagary","Sandwiches");
                 startActivity(intent);
             }
         });
 
-        laptops.setOnClickListener(new View.OnClickListener() {
+
+        main_courseTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Cakes");
+                intent.putExtra("catagary","Main-Course");
                 startActivity(intent);
             }
         });
-        headPhones.setOnClickListener(new View.OnClickListener() {
+        bevergasTxt.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(MenuActivity.this,AddProductActivity.class);
-                intent.putExtra("catagary","Extra");
+                intent.putExtra("catagary","Beverages");
                 startActivity(intent);
             }
         });
+
 
     }
 }

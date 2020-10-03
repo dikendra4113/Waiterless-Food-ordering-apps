@@ -203,7 +203,7 @@ public class AddProductActivity extends AppCompatActivity {
         catagaryName = getIntent().getStringExtra("catagary").toString();
 
         ProductImageRef = FirebaseStorage.getInstance().getReference().child("Product");
-        ProductDetailRef = FirebaseDatabase.getInstance().getReference().child("Product");
+        ProductDetailRef = FirebaseDatabase.getInstance().getReference().child("Product").child(catagaryName);
         loadingBar = new ProgressDialog(this);
 
         selectProductImage.setOnClickListener(new View.OnClickListener() {

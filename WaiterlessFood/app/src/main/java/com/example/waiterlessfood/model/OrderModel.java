@@ -1,7 +1,6 @@
 package com.example.waiterlessfood.model;
 
-public class cartModel {
-
+public class OrderModel {
     private String catagary;
     private String description;
     private String date;
@@ -10,58 +9,11 @@ public class cartModel {
     private String quantity;
     private String time;
     private String table;
-    public String pid;
-    private static String total;
+    private String pid;
+    private String paid;
 
+    public OrderModel(){
 
-
-    public cartModel(){
-
-    }
-
-    public String getTable() {
-        return table;
-    }
-
-    public void setTable(String table) {
-        this.table = table;
-    }
-
-    public String getPid() {
-        return pid;
-    }
-
-    public static String getTotal() {
-        return total;
-    }
-
-    public void setTotal(String total) {
-        this.total = total;
-    }
-
-    public void setPid(String pid) {
-        this.pid = pid;
-    }
-
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
-    public cartModel(String time) {
-        this.time = time;
-    }
-
-    public cartModel(String catagary, String description, String date, String pname, String price, String quantity) {
-        this.catagary = catagary;
-        this.description = description;
-        this.date = date;
-        this.pname = pname;
-        this.price = price;
-        this.quantity = quantity;
     }
 
     public String getCatagary() {
@@ -96,6 +48,18 @@ public class cartModel {
         this.pname = pname;
     }
 
+    public OrderModel(String paid) {
+        this.paid = paid;
+    }
+
+    public String getPaid() {
+        return paid;
+    }
+
+    public void setPaid(String paid) {
+        this.paid = paid;
+    }
+
     public String getPrice() {
         return price;
     }
@@ -110,5 +74,41 @@ public class cartModel {
 
     public void setQuantity(String quantity) {
         this.quantity = quantity;
+    }
+
+    public String getTime() {
+        return time;
+    }
+
+    public void setTime(String time) {
+        this.time = time;
+    }
+
+    public String getTable() {
+        return table;
+    }
+
+    public void setTable(String table) {
+        this.table = table;
+    }
+
+    public String getPid() {
+        return pid;
+    }
+
+    public void setPid(String pid) {
+        this.pid = pid;
+    }
+
+    public OrderModel(String catagary, String description, String date, String pname, String price, String quantity, String time, String table, String pid) {
+        this.catagary = catagary;
+        this.description = description;
+        this.date = date;
+        this.pname = pname;
+        this.price = price;
+        this.quantity = quantity;
+        this.time = time;
+        this.table = table;
+        this.pid = pid;
     }
 }

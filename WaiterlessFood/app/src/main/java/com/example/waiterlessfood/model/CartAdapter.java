@@ -24,9 +24,14 @@ import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+
+import java.util.HashMap;
 
 import io.paperdb.Paper;
 
@@ -38,19 +43,22 @@ public class CartAdapter extends FirebaseRecyclerAdapter<cartModel,CartAdapter.m
     private static ProductCartDetailActivity productCartDetailActivity;
     public static int overall_price=0;
     private final TextView total_price;
+    private final Button payButton;
 
     /**
      * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
      * {@link FirebaseRecyclerOptions} for configuration options.
      *
+     * @param payButton
      * @param total_price
      * @param productCartDetailActivity
      * @param options
      */
-    public CartAdapter(TextView total_price, ProductCartDetailActivity productCartDetailActivity, @NonNull FirebaseRecyclerOptions<cartModel> options) {
+    public CartAdapter(Button payButton, TextView total_price, ProductCartDetailActivity productCartDetailActivity, @NonNull FirebaseRecyclerOptions<cartModel> options) {
         super(options);
         this.productCartDetailActivity = productCartDetailActivity;
         this.total_price = total_price;
+        this.payButton = payButton;
 
     }
 
@@ -61,7 +69,7 @@ public class CartAdapter extends FirebaseRecyclerAdapter<cartModel,CartAdapter.m
         holder.pid = cartModel.getPid();
         holder.user_productPrice.setText("Rs.:"+Integer.parseInt(cartModel.getPrice()) * Integer.parseInt(cartModel.getQuantity()));
         holder.productQuantity.setText(cartModel.getQuantity()+"*"+cartModel.getPrice());
-        String temp = Paper.book().read(Prevelents.flag);
+        //String temp = Paper.book().read(Prevelents.flag);
 
         if (!holder.pid.isEmpty()){
             overall_price = overall_price + Integer.parseInt(cartModel.getPrice()) * Integer.parseInt(cartModel.getQuantity());

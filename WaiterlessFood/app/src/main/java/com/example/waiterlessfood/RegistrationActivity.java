@@ -13,6 +13,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.example.waiterlessfood.prevelent.ECValidattion;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.FirebaseException;
@@ -32,7 +33,7 @@ import static com.example.waiterlessfood.MainActivity.mAuth;
 
 public class RegistrationActivity extends AppCompatActivity {
     Button registerButton;
-    EditText fullnameEditText,varifyPasswordEditText,passwordEditText,mobileNumber,emailEditText;
+    EditText fullnameEditText,passwordEditText,mobileNumber,emailEditText;
     String otpId;
     private ProgressDialog loadingBar;
     DatabaseReference RootRef;
@@ -43,7 +44,7 @@ public class RegistrationActivity extends AppCompatActivity {
        String fullName = fullnameEditText.getText().toString();
        String password = passwordEditText.getText().toString();
        String emailId = emailEditText.getText().toString();
-       String varifyPassword = varifyPasswordEditText.getText().toString();
+
        if(phoneNumber.isEmpty()){
            Toast.makeText(this, "Please Enter Phone Number", Toast.LENGTH_SHORT).show();
        }
@@ -54,19 +55,26 @@ public class RegistrationActivity extends AppCompatActivity {
        }else if(emailId.isEmpty()) {
            Toast.makeText(this, "Please Enter valid Email id", Toast.LENGTH_SHORT).show();
 
+       }else{
+           ECValidattion.PassValidator v1 = new ECValidattion.PassValidator();
+           String err = v1.validate(password);
+           if(err!=null) {
+               Toast.makeText(this, ""+err, Toast.LENGTH_SHORT).show();
+
+           }else{
+
+               loadingBar.setTitle("Authenticate Mobile Number");
+               loadingBar.setMessage("Please Wait...");
+               loadingBar.setCanceledOnTouchOutside(false);
+               loadingBar.show();
+
+               validateUser(phoneNumber,fullName,password,emailId);
+
+
+               // OnVerificationStateChangedCallbacks
+           }
        }
-       else{
 
-           loadingBar.setTitle("Authenticate Mobile Number");
-           loadingBar.setMessage("Please Wait...");
-           loadingBar.setCanceledOnTouchOutside(false);
-           loadingBar.show();
-
-           validateUser(phoneNumber,fullName,password,emailId);
-
-
-                    // OnVerificationStateChangedCallbacks
-       }
     }
 
 
@@ -197,7 +205,6 @@ public class RegistrationActivity extends AppCompatActivity {
 
         registerButton = findViewById(R.id.registerButton);
         fullnameEditText = findViewById(R.id.fullnameEditText);
-        varifyPasswordEditText = findViewById(R.id.varifyPasswordEditText);
         passwordEditText = findViewById(R.id.passwordEditText);
         mobileNumber = findViewById(R.id.mobileNumber);
         emailEditText= findViewById(R.id.editTextTextEmailAddress);

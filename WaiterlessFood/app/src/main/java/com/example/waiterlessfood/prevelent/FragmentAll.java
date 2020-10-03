@@ -1,22 +1,22 @@
-package com.example.waiterlessfood.model;
+package com.example.waiterlessfood.prevelent;
 
-import android.app.ProgressDialog;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.waiterlessfood.R;
-
-import com.example.waiterlessfood.prevelent.Prevelents;
+import com.example.waiterlessfood.model.model;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -27,57 +27,80 @@ import com.google.firebase.database.FirebaseDatabase;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 
-import io.paperdb.Paper;
-
-import static com.example.waiterlessfood.UserActivity.loadingBar;
 import static com.example.waiterlessfood.UserActivity.phoneNumber;
 import static com.example.waiterlessfood.UserActivity.seatNo;
 
+public class FragmentAll extends Fragment {
+    View view;
+    private RecyclerView recyclerView;
+    private List<model>  models;
+    private DatabaseReference databaseReference;
 
-public class myAdapter extends FirebaseRecyclerAdapter<model,myAdapter.myViewHolder> {
-    /**
-     * Initialize a {@link RecyclerView.Adapter} that listens to a Firebase query. See
-     * {@link FirebaseRecyclerOptions} for configuration options.
-     *
-     * @param options
-     */
-    public myAdapter(@NonNull FirebaseRecyclerOptions<model> options) {
-        super(options);
+    public FragmentAll() {
+    }
+
+    @Nullable
+    @Override
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        view = inflater.inflate(R.layout.starter_catagory_fragment, container, false);
+
+        recyclerView = (RecyclerView) view.findViewById(R.id.start_Recycle);
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
+
+//
+        return view;
+//        myAdapter adapter = new myAdapter(getContext());
+
     }
 
     @Override
-    protected void onBindViewHolder(@NonNull myViewHolder holder, int position, @NonNull model model) {
+    public void onStart() {
+        super.onStart();
 
-        holder.productName.setText(model.getPname());
-        holder.product_description.setText(model.getDescription());
-        holder.user_productPrice.setText(model.getPrice());
-        holder.productCatagory.setText(model.getCatagary());
-        holder.pid = model.getPid();
-        holder.seatNo = seatNo;
 
-        Glide.with(holder.productImage.getContext()).load(model.getImage()).into(holder.productImage);
+        FirebaseRecyclerOptions<model> options =
+                new FirebaseRecyclerOptions.Builder<model>()
+                        .setQuery(FirebaseDatabase.getInstance().getReference().child("Product"), model.class)
+                        .build();
+
+        FirebaseRecyclerAdapter<model,StarterViewHolder> adapter = new FirebaseRecyclerAdapter<model, StarterViewHolder>(options) {
+            @Override
+            protected void onBindViewHolder(@NonNull StarterViewHolder holder, int position, @NonNull model model) {
+                holder.productName.setText(model.getPname());
+                holder.product_description.setText(model.getDescription());
+                holder.user_productPrice.setText(model.getPrice());
+                holder.productCatagory.setText(model.getCatagary());
+                holder.pid = model.getPid();
+                holder.seatNo = seatNo;
+
+                Glide.with(holder.productImage.getContext()).load(model.getImage()).into(holder.productImage);
+            }
+
+            @NonNull
+            @Override
+            public StarterViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+                View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_detail,parent,false);
+                StarterViewHolder viewHolder = new StarterViewHolder(view);
+                return viewHolder;
+            }
+        };
+        recyclerView.setAdapter(adapter);
+        adapter.startListening();
+
 
     }
 
-    @NonNull
-    @Override
-    public myViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.product_detail,parent,false);
-        return new myViewHolder(view);
-    }
-
-    static class myViewHolder extends RecyclerView.ViewHolder{
+    public static class StarterViewHolder extends RecyclerView.ViewHolder {
         ImageView productImage;
         TextView productName,product_description,user_productPrice,productCatagory;
-//        Button addToCart;
+        //        Button addToCart;
         ImageView addQuantity,minusQuantity;
         TextView productQuantity;
-        public  String pid,seatNo;
+        public static   String pid,seatNo;
         private String saveCurrentDate,saveCurrentTime;
-
-
-        public myViewHolder(@NonNull View itemView) {
+        public StarterViewHolder(@NonNull View itemView) {
             super(itemView);
             productImage = (ImageView)itemView.findViewById(R.id.productImage);
             productName = (TextView)itemView.findViewById(R.id.productName);
@@ -117,62 +140,7 @@ public class myAdapter extends FirebaseRecyclerAdapter<model,myAdapter.myViewHol
                     }
                 }
             });
-//            addToCart.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                   // storeProductInfo();
-//                    loadingBar.setTitle("Add to Cart");
-//                    loadingBar.setMessage("Please Wait...");
-//                    loadingBar.setCanceledOnTouchOutside(false);
-//                    loadingBar.show();
-//                    Calendar calendar = Calendar.getInstance();
-//                    SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd,yyyy");
-//                    saveCurrentDate = currentDate.format(calendar.getTime());
-//
-//                    SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
-//                    saveCurrentTime = currentTime.format(calendar.getTime());
-//                    final String randomKeyGen = saveCurrentDate+saveCurrentTime;
-//
-//                    final DatabaseReference productRef = FirebaseDatabase.getInstance().getReference().child("CartList");
-//                    final HashMap<String,Object> cartMap = new HashMap<>();
-//
-//                    cartMap.put("table",seatNo);
-//                    cartMap.put("date",saveCurrentDate);
-//                    cartMap.put("pid",pid);
-//                    cartMap.put("time",saveCurrentTime);
-//                    cartMap.put("quantity",productQuantity.getText().toString());
-//                    cartMap.put("pname",productName.getText().toString());
-//                    cartMap.put("description",product_description.getText().toString());
-//                    cartMap.put("price",user_productPrice.getText().toString());
-//                    cartMap.put("catagary",productCatagory.getText().toString());
-//                    final UserDb userDb = new UserDb();
-//                    productRef.child("User View").child(phoneNumber).child("Products").child(pid)
-//                            .updateChildren(cartMap)
-//                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                @Override
-//                                public void onComplete(@NonNull Task<Void> task) {
-//                                    if(task.isSuccessful()){
-//                                        productRef.child("Admin View").child(phoneNumber).child("Products").child(pid)
-//                                                .updateChildren(cartMap).addOnCompleteListener(new OnCompleteListener<Void>() {
-//                                            @Override
-//                                            public void onComplete(@NonNull Task<Void> task) {
-//                                                if (task.isSuccessful()){
-//                                                    loadingBar.dismiss();
-//
-//                                                }
-//                                            }
-//                                        });
-//
-//                                    }
-//                                }
-//                            });
-//                }
-//            });
-
-
-
         }
-
         private void removeFromCart() {
             final DatabaseReference cartRef = FirebaseDatabase.getInstance().getReference().child("CartList");
             cartRef.child("User View").child(phoneNumber).child("Products").child(pid)
@@ -229,14 +197,9 @@ public class myAdapter extends FirebaseRecyclerAdapter<model,myAdapter.myViewHol
                             }
                         }
                     });
+    }
 
-
-        }
 
     }
 
-    @Override
-    public int getItemCount() {
-        return super.getItemCount();
-    }
 }

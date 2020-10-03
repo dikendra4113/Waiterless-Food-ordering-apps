@@ -1,6 +1,8 @@
 package com.example.waiterlessfood;
 
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -23,14 +25,25 @@ import com.example.waiterlessfood.model.model;
 import com.example.waiterlessfood.model.myAdapter;
 import com.example.waiterlessfood.prevelent.Prevelents;
 import com.firebase.ui.database.FirebaseRecyclerOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
 
 import io.paperdb.Paper;
 
 import static com.example.waiterlessfood.UserActivity.phoneNumber;
+import static com.example.waiterlessfood.UserActivity.seatNo;
 import static com.example.waiterlessfood.prevelent.Prevelents.*;
 
 public class ProductCartDetailActivity extends AppCompatActivity {
@@ -44,6 +57,7 @@ public class ProductCartDetailActivity extends AppCompatActivity {
     final int UPI_PAYMENT = 0;
     String amount ;
     static String phone = phoneNumber;
+    String saveCurrentDate,saveCurrentTime,randomKey;
 
 
 
@@ -56,35 +70,119 @@ public class ProductCartDetailActivity extends AppCompatActivity {
         total_price = findViewById(R.id.totalPriceText);
         cart_recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        FirebaseRecyclerOptions<cartModel> options =
+        final FirebaseRecyclerOptions<cartModel> options =
                 new FirebaseRecyclerOptions.Builder<cartModel>()
                         .setQuery(FirebaseDatabase.getInstance().getReference().child("CartList").child("User View").child(phone).child("Products"), cartModel.class)
                         .build();
 
 
-        adapter =new CartAdapter(total_price,ProductCartDetailActivity.this,options);
+        adapter =new CartAdapter(payButton,total_price,ProductCartDetailActivity.this,options);
         cart_recyclerView.setAdapter(adapter);
+
+        Calendar calendar = Calendar.getInstance();
+        final SimpleDateFormat currentDate = new SimpleDateFormat("MMM dd,yyyy");
+        saveCurrentDate = currentDate.format(calendar.getTime());
+
+        SimpleDateFormat currentTime = new SimpleDateFormat("HH:mm:ss a");
+        saveCurrentTime = currentTime.format(calendar.getTime());
+
+        randomKey = saveCurrentDate+saveCurrentTime;
 
         payButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 amount = cartModel.getTotal();
-                payUsingUpi(name, upiId, amount);
+                amount = cartModel.getTotal();
+
+               payUsingUpi(name, upiId, amount);
+
             }
         });
 
 
+
     }
 
-    private void payUsingUpi(String name, String upiId, String amount) {
+    private void moveRecord(final DatabaseReference fromPath, final DatabaseReference toPath, final  DatabaseReference adminPath) {
+
+
+        ValueEventListener valueEventListener = new ValueEventListener() {
+
+            @Override
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+
+                for (DataSnapshot data : dataSnapshot.getChildren()){
+                    final HashMap<String,Object> cartData = new HashMap<>();
+                    cartData.put("pname",data.child("pname").getValue().toString());
+                    cartData.put("date",data.child("date").getValue().toString());
+                    cartData.put("time",data.child("time").getValue().toString());
+                    cartData.put("quantity",data.child("quantity").getValue().toString());
+                    cartData.put("price",data.child("price").getValue().toString());
+                    cartData.put("catagary",data.child("catagary").getValue().toString());
+                    cartData.put("pid",data.child("pid").getValue().toString());
+                    cartData.put("description",data.child("description").getValue().toString());
+                    cartData.put("paid","Done");
+                    final String pid = data.child("pid").getValue().toString();
+                    Log.i("Pname",cartData.toString());
+                    toPath.child(pid).updateChildren(cartData).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if(task.isSuccessful()) {
+                                adminPath.child(pid).updateChildren(cartData);
+                            }
+                        }
+                    });
+
+                }
+                fromPath.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()){
+                            Toast.makeText(ProductCartDetailActivity.this, "Order Completed!!", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+//                toPath.setValue(dataSnapshot.getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
+//                    @Override
+//                    public void onComplete(@NonNull Task<Void> task) {
+//                        if (task.isComplete()) {
+//                            HashMap<String,Object> paymentStatus = new HashMap<>();
+//                            paymentStatus.put("payment","Done");
+//                            //toPath.child(phone).child(fromPath.child("Products").getKey())
+//                            Log.i("Payment",""+dataSnapshot.child("Products").getValue()+"+++"+dataSnapshot.getValue());
+//                            fromPath.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                @Override
+//                                public void onComplete(@NonNull Task<Void> task) {
+//                                    Toast.makeText(ProductCartDetailActivity.this, "Order Placed Successfully", Toast.LENGTH_SHORT).show();
+//                                }
+//                            });
+//
+//                        } else {
+//                            Toast.makeText(ProductCartDetailActivity.this, "Order Not Placed ", Toast.LENGTH_SHORT).show();
+//                        }
+//                    }
+//
+//                });
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {}
+
+        };
+        fromPath.addListenerForSingleValueEvent(valueEventListener);
+    }
+
+    void payUsingUpi(  String name,String upiId,  String amount) {
         Log.e("main ", "name "+name +"--up--"+upiId+"--"+"--"+amount);
         Uri uri = Uri.parse("upi://pay").buildUpon()
-                .appendQueryParameter("pa", upiId)
+                .appendQueryParameter("pa", "dikendraptn4113@oksbi")
                 .appendQueryParameter("pn", name)
                 //.appendQueryParameter("mc", "")
                 //.appendQueryParameter("tid", "02125412")
                 //.appendQueryParameter("tr", "25584584")
-                .appendQueryParameter("am", amount)
+                .appendQueryParameter("tn", "Pay to my app")
+                .appendQueryParameter("am", String.valueOf(1))
                 .appendQueryParameter("cu", "INR")
                 //.appendQueryParameter("refUrl", "blueapp")
                 .build();
@@ -169,6 +267,11 @@ public class ProductCartDetailActivity extends AppCompatActivity {
                 //Code to handle successful transaction here.
                 Toast.makeText(ProductCartDetailActivity.this, "Transaction successful.", Toast.LENGTH_SHORT).show();
                 Log.e("UPI", "payment successfull: "+approvalRefNo);
+                DatabaseReference toPath = FirebaseDatabase.getInstance().getReference().child("Order").child("Users View").child(phone);
+                DatabaseReference fromPath = FirebaseDatabase.getInstance().getReference().child("CartList").child("User View").child(phone).child("Products");
+                DatabaseReference adminPath = FirebaseDatabase.getInstance().getReference().child("Order").child("Admins View");
+                moveRecord(fromPath,toPath,adminPath);
+
             }
             else if("Payment cancelled by user.".equals(paymentCancel)) {
                 Toast.makeText(ProductCartDetailActivity.this, "Payment cancelled by user.", Toast.LENGTH_SHORT).show();
@@ -199,6 +302,7 @@ public class ProductCartDetailActivity extends AppCompatActivity {
         }
         return false;
     }
+
 
 
 
